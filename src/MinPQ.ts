@@ -5,7 +5,7 @@
  */
 type Comparator<Key> = (a: Key, b: Key) => number;
 
-export class MinPQ<Key> {
+export default class MinPQ<Key> {
     private pq: Key[];                    // store items at indices 1 to n
     private n: number;                       // number of items on priority queue
     private comparator: Comparator<Key>;  // optional comparator
@@ -135,6 +135,19 @@ export class MinPQ<Key> {
         return this.isMinHeap(left) && this.isMinHeap(right);
     }
 
+    copy() {
+        var copy = new MinPQ(this.comparator, 0);
+        copy.pq = [...this.pq];
+        copy.n = this.n;
+        return copy;
+    }
+
+    *[Symbol.iterator]() {
+        let copy = this.copy();
+        while(!copy.isEmpty())
+            yield { value: copy.delMin(), done: false }
+        yield { done: true }
+    }
 
     /**
      * Returns an iterator that iterates over the keys on this priority queue
